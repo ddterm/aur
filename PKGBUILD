@@ -1,5 +1,5 @@
-# Maintainer: Mohammadreza Abdollahzadeh < morealaz at gmail dot com >
-# Contributer: Alexander Mezin <mezin.alexander at gmail dot com>
+# Maintainer: Alexander Mezin <mezin.alexander at gmail dot com>
+# Contributor: Mohammadreza Abdollahzadeh < morealaz at gmail dot com >
 pkgname=gnome-shell-extension-ddterm-git
 pkgver=50.r13.g03d9ff0
 pkgrel=1
