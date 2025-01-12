@@ -1,6 +1,6 @@
 pkgbase = gnome-shell-extension-ddterm
 	pkgdesc = Another Drop Down Terminal Extension for GNOME Shell
-	pkgver = 56
+	pkgver = 57
 	pkgrel = 1
 	url = https://github.com/ddterm/gnome-shell-extension-ddterm
 	install = gnome-shell-extension-ddterm.install
@@ -19,9 +19,7 @@ pkgbase = gnome-shell-extension-ddterm
 	depends = gtk3
 	depends = vte3
 	depends = libhandy
-	source = gnome-shell-extension-ddterm-56.tar.gz::https://github.com/ddterm/gnome-shell-extension-ddterm/archive/refs/tags/v56.tar.gz
-	source = https://github.com/ddterm/gnome-shell-extension-ddterm/commit/31143523ae009dea36ea9dd9e47502af46858629.patch
-	sha256sums = 0bbb84042d0e00ca3f393929e38cd5b63716cfbb42e400031526ef13c90919f6
-	sha256sums = 21b561df9b32a19ecf93826d814a6cf3f98477cfcb547f67992f29d6dd3d195a
+	source = gnome-shell-extension-ddterm-57.tar.gz::https://github.com/ddterm/gnome-shell-extension-ddterm/archive/refs/tags/v57.tar.gz
+	sha256sums = 131557afef69dbd225194c72779a72555a8c28d98bdf3767bd1258a66675088b
 
 pkgname = gnome-shell-extension-ddterm
