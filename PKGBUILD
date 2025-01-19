@@ -1,7 +1,7 @@
 # Maintainer: Alexander Mezin <mezin.alexander at gmail dot com>
 # Contributor: Mohammadreza Abdollahzadeh < morealaz at gmail dot com >
 pkgname=gnome-shell-extension-ddterm-git
-pkgver=55.r279.g9479d760
+pkgver=58.r1.ga3417666
 pkgrel=1
 pkgdesc="Another Drop Down Terminal Extension for GNOME Shell (Github version)."
 arch=('any')
@@ -25,11 +25,11 @@ build() {
     arch-meson "${pkgname%-git}" build -Dlinters=disabled "-Dtests=$( ((CHECKFUNC)) && echo enabled || echo disabled )"
 
     # gtk-builder-tool needs X or Wayland
-    LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -- meson compile -C build
+    LIBGL_ALWAYS_SOFTWARE=1 xvfb-run --auto-display --server-args=-noreset --wait=0 -- meson compile -C build
 }
 
 check() {
-    LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -- meson test -C build --print-errorlogs
+    LIBGL_ALWAYS_SOFTWARE=1 xvfb-run --auto-display --server-args=-noreset --wait=0 -- meson test -C build --print-errorlogs
 }
 
 package() {
