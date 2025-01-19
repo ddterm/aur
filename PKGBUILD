@@ -2,7 +2,7 @@
 # Contributor: Amiel Kyamko <junkfactory@gmail.com>
 pkgname=gnome-shell-extension-ddterm
 pkgver=58
-pkgrel=1
+pkgrel=2
 pkgdesc='Another Drop Down Terminal Extension for GNOME Shell'
 arch=('any')
 url="https://github.com/ddterm/${pkgname}"

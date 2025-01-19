@@ -1,8 +1,20 @@
+post_upgrade() {
+  if [ -d /usr/share/gnome-shell/extensions/ddterm@amezin.github.com/schemas ]; then
+    # Clean up gschemas.compiled from old packages
+    rm -f /usr/share/gnome-shell/extensions/ddterm@amezin.github.com/schemas/gschemas.compiled
+    rmdir /usr/share/gnome-shell/extensions/ddterm@amezin.github.com/schemas
+  fi
+
+  echo ''
+  echo '==> Log out, then log in again to load the updated ddterm extension.'
+  echo ''
+}
+
 post_install() {
   echo ''
-  echo '==> To enable Drop Down Terminal:'
-  echo '==> Reload Gnome Shell with Alt-F2 r (on Xorg), logout -> login (wayland)'
-  echo '==> Enable it with the extensions tool'
+  echo '==> To enable ddterm:'
+  echo '==> Log out, then log in again to load the installed extension.'
+  echo '==> Then enable it with gnome-extensions-app'
   echo '==> or run "gnome-extensions enable ddterm@amezin.github.com"'
   echo ''
 }
