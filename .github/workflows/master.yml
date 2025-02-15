@@ -1,0 +1,29 @@
+name: master
+
+concurrency: ${{ github.workflow }}/${{ github.ref }}
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+
+  publish-repo:
+    needs: build
+    runs-on: ubuntu-24.04
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -7,7 +7,7 @@ defaults:
     shell: bash
 
 jobs:
-  build:
+  package:
     strategy:
       fail-fast: false
       matrix:
@@ -48,3 +48,27 @@ jobs:
           ${{ matrix.package }}/*.pkg.tar.*
           ${{ matrix.package }}/*.log
         if-no-files-found: error
+
+  repo:
+    needs: package
+    runs-on: ubuntu-24.04
+    container:
+      image: archlinux:base-devel
+      options: --privileged --tmpfs /run
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: repo
+          pattern: '*-nocheck'
+          merge-multiple: true
+
+      - run: rm *.log
+        working-directory: repo
+
+      - run: repo-add ddterm.db.tar.zst *.pkg.tar.*
+        working-directory: repo
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: repo
