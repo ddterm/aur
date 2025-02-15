@@ -1,0 +1,13 @@
+name: push
+
+concurrency: ${{ github.workflow }}/${{ github.ref }}
+
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore:
+      - renovate/**
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml

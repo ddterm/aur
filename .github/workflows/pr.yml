@@ -1,0 +1,14 @@
+name: push
+
+concurrency: ${{ github.workflow }}/${{ github.ref }}
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    if: >-
+      startsWith(github.event.pull_request.head.ref, 'renovate/')
+      || github.event.pull_request.base.repo.node_id != github.event.pull_request.head.repo.node_id
