@@ -1,0 +1,42 @@
+name: aur-publish
+
+concurrency: ${{ github.workflow }}/${{ github.ref }}
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  push:
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - gnome-shell-extension-ddterm
+          - gnome-shell-extension-ddterm-git
+
+    runs-on: ubuntu-24.04
+    environment:
+      name: AUR
+      url: https://aur.archlinux.org/packages/${{ matrix.package }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - run: mkdir -p ~/.ssh
+      - run: ssh-keyscan aur.archlinux.org >> ~/.ssh/known_hosts
+      - run: echo "${AUR_SSH_KEY}" > ~/.ssh/aur && chmod 600 ~/.ssh/aur
+        env:
+          AUR_SSH_KEY: ${{ secrets.AUR_SSH_KEY }}
+
+      - run: git subtree push --prefix=${{ matrix.package }} ssh://aur@aur.archlinux.org/${{ matrix.package }}.git master
+        env:
+          GIT_SSH_COMMAND: ssh -i ~/.ssh/aur -o IdentitiesOnly=yes

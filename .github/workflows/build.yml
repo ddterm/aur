@@ -1,0 +1,50 @@
+on:
+  workflow_dispatch:
+  workflow_call:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - gnome-shell-extension-ddterm
+          - gnome-shell-extension-ddterm-git
+        check:
+          - check
+          - nocheck
+
+    runs-on: ubuntu-24.04
+    container:
+      image: archlinux:base-devel
+      options: --privileged --tmpfs /run
+
+    steps:
+    - run: pacman -Syu --noconfirm --noprogressbar devtools
+
+    # https://gitlab.archlinux.org/archlinux/devtools/-/merge_requests/197
+    - run: sed -i 's/nspawn_args=(/nspawn_args=(--keep-unit /' /usr/bin/arch-nspawn
+    - run: systemd-machine-id-setup
+    - run: useradd -m builder
+
+    - uses: actions/checkout@v4
+    - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
+    - run: chown -R builder .
+
+    - run: sudo -u builder makepkg --printsrcinfo >.SRCINFO && git diff --exit-code .SRCINFO
+      working-directory: ${{ matrix.package }}
+
+    - run: extra-x86_64-build -- -U builder -- --${{ matrix.check }}
+      working-directory: ${{ matrix.package }}
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.package }}-${{ matrix.check }}
+        path: |
+          ${{ matrix.package }}/*.pkg.tar.*
+          ${{ matrix.package }}/*.log
+        if-no-files-found: error
