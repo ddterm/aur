@@ -53,7 +53,7 @@ jobs:
     needs: package
     runs-on: ubuntu-24.04
     container:
-      image: archlinux:base-devel
+      image: archlinux:base
       options: --privileged --tmpfs /run
 
     steps:
