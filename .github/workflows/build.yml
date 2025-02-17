@@ -54,7 +54,6 @@ jobs:
     runs-on: ubuntu-24.04
     container:
       image: archlinux:base
-      options: --privileged --tmpfs /run
 
     steps:
       - uses: actions/download-artifact@v4
