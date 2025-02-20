@@ -25,11 +25,9 @@ jobs:
 
     steps:
     - run: pacman -Syu --noconfirm --noprogressbar devtools
-
-    # https://gitlab.archlinux.org/archlinux/devtools/-/merge_requests/197
-    - run: sed -i 's/nspawn_args=(/nspawn_args=(--keep-unit /' /usr/bin/arch-nspawn
     - run: systemd-machine-id-setup
     - run: useradd -m builduser
+    - run: echo "$GITHUB_WORKSPACE/.github/bin" >> "$GITHUB_PATH"
 
     - uses: actions/checkout@v4
     - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
