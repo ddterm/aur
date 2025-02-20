@@ -24,17 +24,24 @@ jobs:
       options: --privileged --tmpfs /run
 
     steps:
+    - run: sed -i '/^NoExtract/d' /etc/pacman.conf
+    - run: echo "$REPO_CONFIG" >> /etc/pacman.conf
+      env:
+        REPO_CONFIG: |
+          [ddterm]
+          SigLevel = Never
+          Server = https://ddterm.github.io/aur
+
     - run: pacman -Syu --noconfirm --noprogressbar devtools
     - run: systemd-machine-id-setup
     - run: useradd -m builduser
     - run: echo "$GITHUB_WORKSPACE/.github/bin" >> "$GITHUB_PATH"
-    - run: sed -i '/^NoExtract/d' /etc/pacman.conf
 
     - uses: actions/checkout@v4
     - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
     - run: chown -R builduser .
 
-    - run: mkarchroot /var/tmp/root base-devel
+    - run: mkarchroot -C /etc/pacman.conf -M /etc/makepkg.conf /var/tmp/root base-devel
     - run: makechrootpkg -r /var/tmp -c -n -C -U builduser -- --${{ matrix.check }}
       working-directory: ${{ matrix.package }}
 
