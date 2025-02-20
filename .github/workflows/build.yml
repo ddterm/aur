@@ -28,12 +28,14 @@ jobs:
     - run: systemd-machine-id-setup
     - run: useradd -m builduser
     - run: echo "$GITHUB_WORKSPACE/.github/bin" >> "$GITHUB_PATH"
+    - run: sed -i '/^NoExtract/d' /etc/pacman.conf
 
     - uses: actions/checkout@v4
     - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
     - run: chown -R builduser .
 
-    - run: extra-x86_64-build -- -U builduser -- --${{ matrix.check }}
+    - run: mkarchroot /var/tmp/root base-devel
+    - run: makechrootpkg -r /var/tmp -c -n -C -U builduser -- --${{ matrix.check }}
       working-directory: ${{ matrix.package }}
 
     - uses: actions/upload-artifact@v4
