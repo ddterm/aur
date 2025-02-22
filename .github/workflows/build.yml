@@ -6,6 +6,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  DEVTOOLS_COLOR: always
+
 jobs:
   package:
     strategy:
@@ -32,7 +35,7 @@ jobs:
           SigLevel = Never
           Server = https://ddterm.github.io/aur
 
-    - run: pacman -Syu --noconfirm --noprogressbar devtools
+    - run: pacman -Syu --noconfirm --noprogressbar --color=always devtools
     - run: systemd-machine-id-setup
     - run: useradd -m builduser
     - run: echo "$GITHUB_WORKSPACE/.github/bin" >> "$GITHUB_PATH"
@@ -67,7 +70,7 @@ jobs:
       image: archlinux:base
 
     steps:
-    - run: pacman -Syu --noconfirm --noprogressbar git sudo
+    - run: pacman -Syu --noconfirm --noprogressbar --color=always git sudo
     - run: useradd -m builduser
 
     - uses: actions/checkout@v4
