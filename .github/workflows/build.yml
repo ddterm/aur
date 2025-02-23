@@ -43,6 +43,7 @@ jobs:
           ${{ matrix.package }}/*.pkg.tar.*
           ${{ matrix.package }}/*.log
         if-no-files-found: error
+      if: always()
 
   srcinfo:
     strategy:
