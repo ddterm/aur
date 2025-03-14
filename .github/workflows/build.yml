@@ -48,11 +48,15 @@ jobs:
     - run: makechrootpkg -r /var/tmp -c -n -C -U builduser -- --${{ matrix.check }}
       working-directory: ${{ matrix.package }}
 
+    - run: sudo -u builduser makepkg --allsource --holdver
+      working-directory: ${{ matrix.package }}
+
     - uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.package }}-${{ matrix.check }}
         path: |
           ${{ matrix.package }}/*.pkg.tar.*
+          ${{ matrix.package }}/*.src.tar.*
           ${{ matrix.package }}/*.log
         if-no-files-found: error
       if: always()
@@ -105,3 +109,40 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: repo
+
+  installed-test:
+    needs: package
+    runs-on: ubuntu-24.04
+    container:
+      image: archlinux:base-devel
+      options: --privileged --tmpfs /run
+
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - gnome-shell-extension-ddterm
+          - gnome-shell-extension-ddterm-git
+
+    steps:
+      - run: pacman -Syu  --noconfirm
+      - run: systemd-machine-id-setup
+      - run: mkdir -p -m 01777 /tmp/.X11-unix
+      - run: |
+          useradd -m builduser
+          echo 'builduser ALL=(ALL:ALL) NOPASSWD: ALL' >/etc/sudoers.d/builduser
+          chmod 0440 /etc/sudoers.d/builduser
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.package }}-nocheck
+
+      - run: rm -v *.log
+      - run: pacman --noconfirm -U *.pkg.tar*
+      - run: tar xf *.src.tar.*
+      - run: chown -R builduser .
+        working-directory: ${{ matrix.package }}
+      - run: sudo -u builduser makepkg --nobuild --holdver --syncdeps --noconfirm
+        working-directory: ${{ matrix.package }}
+      - run: sudo -u builduser pytest -p no:cacheprovider --system-bus "$(find src -name pytest.ini -printf '%h' -quit)"
+        working-directory: ${{ matrix.package }}
