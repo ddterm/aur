@@ -8,6 +8,10 @@ defaults:
 
 env:
   DEVTOOLS_COLOR: always
+  REPO_CONFIG: |
+    [ddterm]
+    SigLevel = Never
+    Server = https://ddterm.github.io/aur
 
 jobs:
   package:
@@ -17,9 +21,6 @@ jobs:
         package:
           - gnome-shell-extension-ddterm
           - gnome-shell-extension-ddterm-git
-        check:
-          - check
-          - nocheck
 
     runs-on: ubuntu-24.04
     container:
@@ -29,53 +30,11 @@ jobs:
     steps:
     - run: sed -i '/^NoExtract/d' /etc/pacman.conf
     - run: echo "$REPO_CONFIG" >> /etc/pacman.conf
-      env:
-        REPO_CONFIG: |
-          [ddterm]
-          SigLevel = Never
-          Server = https://ddterm.github.io/aur
 
     - run: pacman -Syu --noconfirm --noprogressbar --color=always devtools
     - run: systemd-machine-id-setup
     - run: useradd -m builduser
     - run: echo "$GITHUB_WORKSPACE/.github/bin" >> "$GITHUB_PATH"
-
-    - uses: actions/checkout@v4
-    - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
-    - run: chown -R builduser .
-
-    - run: mkarchroot -C /etc/pacman.conf -M /etc/makepkg.conf /var/tmp/root base-devel
-    - run: makechrootpkg -r /var/tmp -c -n -C -U builduser -- --${{ matrix.check }}
-      working-directory: ${{ matrix.package }}
-
-    - run: sudo -u builduser makepkg --allsource --holdver
-      working-directory: ${{ matrix.package }}
-
-    - uses: actions/upload-artifact@v4
-      with:
-        name: ${{ matrix.package }}-${{ matrix.check }}
-        path: |
-          ${{ matrix.package }}/*.pkg.tar.*
-          ${{ matrix.package }}/*.src.tar.*
-          ${{ matrix.package }}/*.log
-        if-no-files-found: error
-      if: always()
-
-  srcinfo:
-    strategy:
-      fail-fast: false
-      matrix:
-        package:
-          - gnome-shell-extension-ddterm
-          - gnome-shell-extension-ddterm-git
-
-    runs-on: ubuntu-24.04
-    container:
-      image: archlinux:base
-
-    steps:
-    - run: pacman -Syu --noconfirm --noprogressbar --color=always git sudo
-    - run: useradd -m builduser
 
     - uses: actions/checkout@v4
     - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
@@ -87,28 +46,67 @@ jobs:
     - run: git diff --exit-code .SRCINFO
       working-directory: ${{ matrix.package }}
 
-  repo:
+    - run: mkarchroot -C /etc/pacman.conf -M /etc/makepkg.conf /var/tmp/root base-devel
+    - run: makechrootpkg -r /var/tmp -c -n -C -U builduser
+      working-directory: ${{ matrix.package }}
+
+    - run: sudo -u builduser makepkg --allsource --holdver
+      working-directory: ${{ matrix.package }}
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.package }}
+        path: |
+          ${{ matrix.package }}/*.pkg.tar.*
+          ${{ matrix.package }}/*.src.tar.*
+          ${{ matrix.package }}/*.log
+        if-no-files-found: error
+      if: always()
+
+  repro:
     needs: package
     runs-on: ubuntu-24.04
     container:
       image: archlinux:base
+      options: --privileged --tmpfs /run
+
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - gnome-shell-extension-ddterm
+          - gnome-shell-extension-ddterm-git
 
     steps:
+      - run: sed -i '/^NoExtract/d' /etc/pacman.conf
+      - run: echo "$REPO_CONFIG" >> /etc/pacman.conf
+
+      - run: pacman -Syu --noconfirm --noprogressbar --color=always devtools
+      - run: sed -i 's/^nspawn_args=(/nspawn_args=(--keep-unit /' /usr/bin/arch-nspawn
+      - run: systemd-machine-id-setup
+      - run: |
+          useradd -m builduser
+          echo 'builduser ALL=(ALL:ALL) NOPASSWD: ALL' >/etc/sudoers.d/builduser
+          chmod 0440 /etc/sudoers.d/builduser
+
       - uses: actions/download-artifact@v4
         with:
-          path: repo
-          pattern: '*-nocheck'
-          merge-multiple: true
+          name: ${{ matrix.package }}
 
-      - run: rm *.log
-        working-directory: repo
-
-      - run: repo-add ddterm.db.tar.zst *.pkg.tar.*
-        working-directory: repo
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: repo
+      - run: rm -v *.log
+      - run: tar xf *.src.tar.*
+      - run: chown -R builduser .
+        working-directory: ${{ matrix.package }}
+      - run: sudo -u builduser makepkg --nobuild --holdver --syncdeps --noconfirm
+        working-directory: ${{ matrix.package }}
+      - run: >-
+          env
+          SUDO_USER=builduser
+          SUDO_UID=$(id -u builduser)
+          SUDO_GID=$(id -g builduser)
+          SUDO_HOME=~builduser
+          makerepropkg -d -n ../*.pkg.tar.*
+        working-directory: ${{ matrix.package }}
 
   installed-test:
     needs: package
@@ -135,7 +133,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: ${{ matrix.package }}-nocheck
+          name: ${{ matrix.package }}
 
       - run: rm -v *.log
       - run: pacman --noconfirm -U *.pkg.tar*
@@ -146,3 +144,26 @@ jobs:
         working-directory: ${{ matrix.package }}
       - run: sudo -u builduser pytest -p no:cacheprovider --system-bus "$(find src -name pytest.ini -printf '%h' -quit)"
         working-directory: ${{ matrix.package }}
+
+  repo:
+    needs: package
+    runs-on: ubuntu-24.04
+    container:
+      image: archlinux:base
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: repo
+          pattern: '*'
+          merge-multiple: true
+
+      - run: rm -v *.log
+        working-directory: repo
+
+      - run: repo-add ddterm.db.tar.zst *.pkg.tar.*
+        working-directory: repo
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: repo
