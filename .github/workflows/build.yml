@@ -23,7 +23,7 @@ jobs:
 
     runs-on: ubuntu-24.04
     container:
-      image: archlinux:base-devel
+      image: ghcr.io/archlinux/archlinux:base-devel
       options: --privileged --tmpfs /run
 
     steps:
@@ -67,7 +67,7 @@ jobs:
 
     runs-on: ubuntu-24.04
     container:
-      image: archlinux:base
+      image: ghcr.io/archlinux/archlinux:base
 
     steps:
     - run: pacman -Syu --noconfirm --noprogressbar --color=always git sudo
@@ -87,7 +87,7 @@ jobs:
     needs: package
     runs-on: ubuntu-24.04
     container:
-      image: archlinux:base
+      image: ghcr.io/archlinux/archlinux:base
 
     steps:
       - uses: actions/download-artifact@v4
