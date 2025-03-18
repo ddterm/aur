@@ -10,6 +10,41 @@ env:
   DEVTOOLS_COLOR: always
 
 jobs:
+  src:
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - gnome-shell-extension-ddterm
+          - gnome-shell-extension-ddterm-git
+
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/archlinux/archlinux:base-devel
+
+    steps:
+    - run: pacman -Syu --noconfirm --noprogressbar --color=always git
+    - run: useradd -m builduser
+
+    - uses: actions/checkout@v4
+    - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
+    - run: chown -R builduser .
+
+    - run: sudo -u builduser makepkg --printsrcinfo >.SRCINFO
+      working-directory: ${{ matrix.package }}
+
+    - run: git diff --exit-code .SRCINFO
+      working-directory: ${{ matrix.package }}
+
+    - run: sudo -u builduser makepkg --allsource
+      working-directory: ${{ matrix.package }}
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.package }}-src
+        path: ${{ matrix.package }}/*.src.tar.*
+        if-no-files-found: error
+
   package:
     strategy:
       fail-fast: false
@@ -21,6 +56,7 @@ jobs:
           - check
           - nocheck
 
+    needs: src
     runs-on: ubuntu-24.04
     container:
       image: ghcr.io/archlinux/archlinux:base-devel
@@ -42,10 +78,17 @@ jobs:
 
     - uses: actions/checkout@v4
     - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
+
+    - uses: actions/download-artifact@v4
+      with:
+        path: ${{ matrix.package }}
+        name: ${{ matrix.package }}-src
+
+    - run: tar xvf ${{ matrix.package }}/*.src.tar.*
     - run: chown -R builduser .
 
     - run: mkarchroot -C /etc/pacman.conf -M /etc/makepkg.conf /var/tmp/root base-devel
-    - run: makechrootpkg -r /var/tmp -c -n -C -U builduser -- --${{ matrix.check }}
+    - run: makechrootpkg -r /var/tmp -c -n -C -U builduser -- --holdver --${{ matrix.check }}
       working-directory: ${{ matrix.package }}
 
     - uses: actions/upload-artifact@v4
@@ -56,32 +99,6 @@ jobs:
           ${{ matrix.package }}/*.log
         if-no-files-found: error
       if: always()
-
-  srcinfo:
-    strategy:
-      fail-fast: false
-      matrix:
-        package:
-          - gnome-shell-extension-ddterm
-          - gnome-shell-extension-ddterm-git
-
-    runs-on: ubuntu-24.04
-    container:
-      image: ghcr.io/archlinux/archlinux:base
-
-    steps:
-    - run: pacman -Syu --noconfirm --noprogressbar --color=always git sudo
-    - run: useradd -m builduser
-
-    - uses: actions/checkout@v4
-    - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
-    - run: chown -R builduser .
-
-    - run: sudo -u builduser makepkg --printsrcinfo >.SRCINFO
-      working-directory: ${{ matrix.package }}
-
-    - run: git diff --exit-code .SRCINFO
-      working-directory: ${{ matrix.package }}
 
   repo:
     needs: package
