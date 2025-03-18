@@ -100,6 +100,46 @@ jobs:
         if-no-files-found: error
       if: always()
 
+  installed-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - gnome-shell-extension-ddterm
+          - gnome-shell-extension-ddterm-git
+
+    needs: package
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/archlinux/archlinux:base-devel
+      options: --privileged --tmpfs /run
+
+    steps:
+    - run: pacman -Syu  --noconfirm
+    - run: systemd-machine-id-setup
+    - run: |
+        useradd -m builduser
+        echo 'builduser ALL=(ALL:ALL) NOPASSWD: ALL' >/etc/sudoers.d/builduser
+        chmod 0440 /etc/sudoers.d/builduser
+
+    - uses: actions/download-artifact@v4
+      with:
+        name: ${{ matrix.package }}-src
+
+    - uses: actions/download-artifact@v4
+      with:
+        name: ${{ matrix.package }}-nocheck
+
+    - run: rm -v *.log
+    - run: pacman --noconfirm -U *.pkg.tar.*
+    - run: tar xf *.src.tar.*
+    - run: chown -R builduser .
+      working-directory: ${{ matrix.package }}
+    - run: sudo -u builduser makepkg --nobuild --holdver --syncdeps --noconfirm
+      working-directory: ${{ matrix.package }}
+    - run: sudo -u builduser pytest -p no:cacheprovider --system-bus "$(find src -name pytest.ini -printf '%h' -quit)"
+      working-directory: ${{ matrix.package }}
+
   repo:
     needs: package
     runs-on: ubuntu-24.04
