@@ -122,6 +122,8 @@ jobs:
         echo 'builduser ALL=(ALL:ALL) NOPASSWD: ALL' >/etc/sudoers.d/builduser
         chmod 0440 /etc/sudoers.d/builduser
 
+    - run: mkdir -p -m 01777 /tmp/.X11-unix
+
     - uses: actions/download-artifact@v4
       with:
         name: ${{ matrix.package }}-src
