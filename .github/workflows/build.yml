@@ -115,7 +115,7 @@ jobs:
       options: --privileged --tmpfs /run
 
     steps:
-    - run: pacman -Syu  --noconfirm
+    - run: pacman -Syu --noconfirm git
     - run: systemd-machine-id-setup
     - run: |
         useradd -m builduser
@@ -123,6 +123,10 @@ jobs:
         chmod 0440 /etc/sudoers.d/builduser
 
     - run: mkdir -p -m 01777 /tmp/.X11-unix
+
+    - uses: actions/checkout@v4
+      with:
+        sparse-checkout: patch-installed-test
 
     - uses: actions/download-artifact@v4
       with:
@@ -139,6 +143,10 @@ jobs:
       working-directory: ${{ matrix.package }}
     - run: sudo -u builduser makepkg --nobuild --holdver --syncdeps --noconfirm
       working-directory: ${{ matrix.package }}
+    - run: "$GITHUB_WORKSPACE/patch-installed-test/$PACKAGE_NAME.sh"
+      working-directory: ${{ matrix.package }}/src
+      env:
+        PACKAGE_NAME: ${{ matrix.package }}
     - run: sudo -u builduser pytest -p no:cacheprovider --system-bus "$(find src -name pytest.ini -printf '%h' -quit)"
       working-directory: ${{ matrix.package }}
 
