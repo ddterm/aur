@@ -53,9 +53,6 @@ jobs:
         package:
           - gnome-shell-extension-ddterm
           - gnome-shell-extension-ddterm-git
-        check:
-          - check
-          - nocheck
 
     needs: src
     runs-on: ubuntu-24.04
@@ -89,12 +86,12 @@ jobs:
     - run: chown -R builduser .
 
     - run: mkarchroot -C /etc/pacman.conf -M /etc/makepkg.conf /var/tmp/root base-devel
-    - run: makechrootpkg -r /var/tmp -c -n -C -U builduser -- --holdver --${{ matrix.check }}
+    - run: makechrootpkg -r /var/tmp -c -n -C -U builduser -- --holdver
       working-directory: ${{ matrix.package }}
 
     - uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.package }}-${{ matrix.check }}
+        name: ${{ matrix.package }}-pkg
         path: |
           ${{ matrix.package }}/*.pkg.tar.*
           ${{ matrix.package }}/*.log
@@ -118,10 +115,7 @@ jobs:
     steps:
     - run: pacman -Syu --noconfirm git
     - run: systemd-machine-id-setup
-    - run: |
-        useradd -m builduser
-        echo 'builduser ALL=(ALL:ALL) NOPASSWD: ALL' >/etc/sudoers.d/builduser
-        chmod 0440 /etc/sudoers.d/builduser
+    - run: useradd -m builduser
 
     - uses: actions/checkout@v4
       with:
@@ -133,14 +127,14 @@ jobs:
 
     - uses: actions/download-artifact@v4
       with:
-        name: ${{ matrix.package }}-nocheck
+        name: ${{ matrix.package }}-pkg
 
     - run: rm -v *.log
     - run: pacman --noconfirm -U *.pkg.tar.*
     - run: tar xf *.src.tar.*
     - run: chown -R builduser .
       working-directory: ${{ matrix.package }}
-    - run: sudo -u builduser makepkg --nobuild --holdver --syncdeps --noconfirm
+    - run: sudo -u builduser makepkg --nobuild --holdver --nodeps
       working-directory: ${{ matrix.package }}
     - run: "$GITHUB_WORKSPACE/installed-test/$PACKAGE_NAME.sh"
       working-directory: ${{ matrix.package }}/src
@@ -157,7 +151,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: repo
-          pattern: '*-nocheck'
+          pattern: '*-pkg'
           merge-multiple: true
 
       - run: rm *.log
