@@ -8,6 +8,7 @@ defaults:
 
 env:
   DEVTOOLS_COLOR: always
+  FORCE_COLOR: 1
 
 jobs:
   src:
