@@ -72,11 +72,14 @@ jobs:
         package:
           - gnome-shell-extension-ddterm
           - gnome-shell-extension-ddterm-git
+        image:
+          - ghcr.io/archlinux/archlinux:base-devel
+          - manjarolinux/build
 
     needs: package
     runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/archlinux/archlinux:base-devel
+      image: ${{ matrix.image }}
       options: --privileged --tmpfs /run
 
     steps:
