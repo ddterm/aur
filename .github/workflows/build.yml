@@ -72,17 +72,22 @@ jobs:
         package:
           - gnome-shell-extension-ddterm
           - gnome-shell-extension-ddterm-git
+        image:
+          - ghcr.io/archlinux/archlinux:base-devel
+          - docker.io/manjarolinux/build:latest
 
     needs: package
     runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/archlinux/archlinux:base-devel
+      image: ${{ matrix.image }}
       options: --privileged --tmpfs /run
 
     steps:
-    - run: pacman -Syu --noconfirm git
+    - run: pacman -Syu --noconfirm --needed git lsb-release
     - run: systemd-machine-id-setup
     - run: useradd -m builduser
+    - id: lsb_release
+      run: echo "id=$(lsb_release -is)" >>"$GITHUB_OUTPUT"
 
     - uses: actions/checkout@v4
       with:
@@ -106,7 +111,7 @@ jobs:
         PACKAGE_NAME: ${{ matrix.package }}
     - uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.package }}-test
+        name: ${{ matrix.package }}-${{ steps.lsb_release.outputs.id }}-test
         path: ${{ steps.runtest.outputs.reports }}
         if-no-files-found: error
       if: always() && steps.runtest.outputs.reports
