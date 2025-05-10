@@ -8,7 +8,6 @@ pytest_args=(
   -p no:cacheprovider
   --system-bus
   --self-contained-html
-  -n auto
   -vv
 )
 
