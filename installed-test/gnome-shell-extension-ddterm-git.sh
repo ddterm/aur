@@ -11,4 +11,8 @@ pytest_args=(
   -vv
 )
 
-exec sudo -E -u builduser tox -c "$(find . -name tox.ini)" --sitepackages -e pytest -- "${pytest_args[@]}"
+toxdir="$(find "$PWD" -name tox.ini -printf '%h' -quit)"
+
+echo "reports=${toxdir}/tests/report.html" >>"$GITHUB_OUTPUT"
+
+exec sudo -E -u builduser tox -c "${toxdir}" --sitepackages -e pytest -- "${pytest_args[@]}"

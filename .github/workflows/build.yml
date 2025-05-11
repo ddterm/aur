@@ -99,10 +99,17 @@ jobs:
       working-directory: ${{ matrix.package }}
     - run: sudo -u builduser makepkg --nobuild --holdver --nodeps
       working-directory: ${{ matrix.package }}
-    - run: "$GITHUB_WORKSPACE/installed-test/$PACKAGE_NAME.sh"
+    - id: runtest
+      run: "$GITHUB_WORKSPACE/installed-test/$PACKAGE_NAME.sh"
       working-directory: ${{ matrix.package }}/src
       env:
         PACKAGE_NAME: ${{ matrix.package }}
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.package }}-test
+        path: ${{ steps.runtest.outputs.reports }}
+        if-no-files-found: error
+      if: always() && steps.runtest.outputs.reports
 
   repo:
     needs: package
