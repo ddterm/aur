@@ -134,7 +134,7 @@ jobs:
 
       - run: >-
           find . -type d -exec bash -c
-          'tree "$0" -h --du -H "/$GITHUB_REPOSITORY/${0:2}" -o "$0/index.html"'
+          'tree "$0" -h --du -H "/${GITHUB_REPOSITORY#*/}/${0:2}" -o "$0/index.html"'
           '{}' ';'
         working-directory: repo
 
