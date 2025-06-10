@@ -112,7 +112,10 @@ jobs:
       if: always() && steps.runtest.outputs.reports
 
   repo:
-    needs: package
+    needs:
+      - package
+      - installed-test
+
     runs-on: ubuntu-24.04
     container:
       image: ghcr.io/archlinux/archlinux:base
@@ -129,6 +132,12 @@ jobs:
 
       - run: repo-add ddterm.db.tar.zst *.pkg.tar.*
         working-directory: repo
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: repo
+          pattern: '*-test'
+          merge-multiple: false
 
       - run: pacman -Syu --noconfirm tree
 
