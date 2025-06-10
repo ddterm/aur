@@ -130,6 +130,14 @@ jobs:
       - run: repo-add ddterm.db.tar.zst *.pkg.tar.*
         working-directory: repo
 
+      - run: pacman -Syu --noconfirm tree
+
+      - run: >-
+          find . -type d -exec bash -c
+          'tree "$0" -h --du -H "/$GITHUB_REPOSITORY/${0:2}" -o "$0/index.html"'
+          '{}' ';'
+        working-directory: repo
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: repo
