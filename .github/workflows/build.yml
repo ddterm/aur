@@ -44,7 +44,7 @@ jobs:
     - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
     - run: chown -R builduser .
 
-    - run: sudo -u builduser makepkg --printsrcinfo >.SRCINFO
+    - run: sudo -u builduser makepkg --printsrcinfo | tee .SRCINFO
       working-directory: ${{ matrix.package }}
 
     - run: git diff --exit-code .SRCINFO
@@ -94,15 +94,16 @@ jobs:
       with:
         name: ${{ matrix.package }}-pkg
 
-    - run: rm -v *.log
-    - run: pacman --noconfirm -U *.pkg.tar.*
-    - run: tar xf *.src.tar.*
+    - run: rm -v ./*.log
+    - run: pacman --noconfirm -U ./*.pkg.tar.*
+    - run: tar xf ./*.src.tar.*
     - run: chown -R builduser .
       working-directory: ${{ matrix.package }}
     - run: sudo -u builduser makepkg --nobuild --holdver --nodeps
       working-directory: ${{ matrix.package }}
     - id: runtest
-      run: "$GITHUB_WORKSPACE/installed-test/$PACKAGE_NAME.sh"
+      run: >-
+        "$GITHUB_WORKSPACE/installed-test/$PACKAGE_NAME.sh"
       working-directory: ${{ matrix.package }}/src
       env:
         PACKAGE_NAME: ${{ matrix.package }}
@@ -129,10 +130,10 @@ jobs:
           pattern: '*-pkg'
           merge-multiple: true
 
-      - run: rm *.log
+      - run: rm ./*.log
         working-directory: repo
 
-      - run: repo-add ddterm.db.tar.zst *.pkg.tar.*
+      - run: repo-add ddterm.db.tar.zst ./*.pkg.tar.*
         working-directory: repo
 
       - uses: actions/download-artifact@v4
