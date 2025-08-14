@@ -1,5 +1,8 @@
 name: aur-publish
 
+permissions:
+  contents: read
+
 concurrency: ${{ github.workflow }}/${{ github.ref }}
 
 on:
