@@ -13,6 +13,26 @@ env:
   FORCE_COLOR: 1
 
 jobs:
+  actionlint:
+    runs-on: ubuntu-24.04
+    env:
+      # renovate: datasource=github-releases depName=rhysd/actionlint
+      ACTIONLINT_VERSION: 1.7.7
+
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - working-directory: ${{ runner.temp }}
+        run: |
+          wget "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          mkdir actionlint
+          tar -C actionlint -xf "actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          echo "$(pwd)/actionlint" >>"$GITHUB_PATH"
+          wget "https://raw.githubusercontent.com/rhysd/actionlint/v${ACTIONLINT_VERSION}/.github/actionlint-matcher.json"
+          echo "::add-matcher::$(pwd)/actionlint-matcher.json"
+
+      - run: actionlint -verbose -color
+
   shellcheck:
     strategy:
       fail-fast: false
