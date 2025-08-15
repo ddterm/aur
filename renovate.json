@@ -2,5 +2,11 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "packageRules": [
+    {
+      "extends": ["helpers:pinGitHubActionDigests", ":pinVersions"],
+      "versioning": "npm"
+    }
   ]
 }
