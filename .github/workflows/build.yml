@@ -13,6 +13,29 @@ env:
   FORCE_COLOR: 1
 
 jobs:
+  shellcheck:
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - gnome-shell-extension-ddterm
+          - gnome-shell-extension-ddterm-git
+
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/archlinux/archlinux:base-devel
+
+    steps:
+      - run: pacman -Syu --noconfirm shellcheck git
+
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
+
+      - run: echo '::add-matcher::.github/shellcheck-gcc-problem-matcher.json'
+      - run: shellcheck --format=gcc "$PACKAGE_NAME/PKGBUILD" "$PACKAGE_NAME"/*.install
+        env:
+          PACKAGE_NAME: ${{ matrix.package }}
+
   package:
     strategy:
       fail-fast: false
