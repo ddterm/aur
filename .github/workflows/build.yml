@@ -40,7 +40,7 @@ jobs:
     - run: useradd -m builduser
     - run: echo "$GITHUB_WORKSPACE/.github/bin" >> "$GITHUB_PATH"
 
-    - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
     - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
     - run: chown -R builduser .
 
@@ -86,7 +86,7 @@ jobs:
     - run: systemd-machine-id-setup
     - run: useradd -m builduser
 
-    - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       with:
         sparse-checkout: installed-test
 
