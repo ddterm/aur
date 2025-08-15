@@ -40,7 +40,7 @@ jobs:
     - run: useradd -m builduser
     - run: echo "$GITHUB_WORKSPACE/.github/bin" >> "$GITHUB_PATH"
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
     - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
     - run: chown -R builduser .
 
@@ -57,7 +57,7 @@ jobs:
     - run: makechrootpkg -r /var/tmp -c -n -C -U builduser -- --holdver
       working-directory: ${{ matrix.package }}
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
         name: ${{ matrix.package }}-pkg
         path: |
@@ -86,11 +86,11 @@ jobs:
     - run: systemd-machine-id-setup
     - run: useradd -m builduser
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
       with:
         sparse-checkout: installed-test
 
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
       with:
         name: ${{ matrix.package }}-pkg
 
@@ -107,7 +107,7 @@ jobs:
       working-directory: ${{ matrix.package }}/src
       env:
         PACKAGE_NAME: ${{ matrix.package }}
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
         name: ${{ matrix.package }}-test
         path: ${{ steps.runtest.outputs.reports }}
@@ -124,7 +124,7 @@ jobs:
       image: ghcr.io/archlinux/archlinux:base
 
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           path: repo
           pattern: '*-pkg'
@@ -136,7 +136,7 @@ jobs:
       - run: repo-add ddterm.db.tar.zst ./*.pkg.tar.*
         working-directory: repo
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           path: repo
           pattern: '*-test'
@@ -150,6 +150,6 @@ jobs:
           '{}' ';'
         working-directory: repo
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: repo
