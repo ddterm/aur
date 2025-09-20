@@ -43,10 +43,10 @@ jobs:
 
     runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/archlinux/archlinux:base-devel
+      image: ghcr.io/archlinux/archlinux:base-devel-20250917.0.422098@sha256:b3e6b3d978475ecfaaf73c80809f57524aa6f29683acb276f0530580f22db1f6
 
     steps:
-      - run: pacman -Syu --noconfirm shellcheck git
+      - run: pacman -Sy --noconfirm shellcheck git
 
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
@@ -66,7 +66,7 @@ jobs:
 
     runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/archlinux/archlinux:base-devel
+      image: ghcr.io/archlinux/archlinux:base-devel-20250917.0.422098@sha256:b3e6b3d978475ecfaaf73c80809f57524aa6f29683acb276f0530580f22db1f6
       options: --privileged --tmpfs /run
 
     steps:
@@ -78,7 +78,7 @@ jobs:
           SigLevel = Never
           Server = https://ddterm.github.io/aur
 
-    - run: pacman -Syu --noconfirm --noprogressbar --color=always devtools
+    - run: pacman -Sy --noconfirm --noprogressbar --color=always devtools
     - run: systemd-machine-id-setup
     - run: useradd -m builduser
     - run: echo "$GITHUB_WORKSPACE/.github/bin" >> "$GITHUB_PATH"
@@ -121,11 +121,11 @@ jobs:
     needs: package
     runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/archlinux/archlinux:base-devel
+      image: ghcr.io/archlinux/archlinux:base-devel-20250917.0.422098@sha256:b3e6b3d978475ecfaaf73c80809f57524aa6f29683acb276f0530580f22db1f6
       options: --privileged --tmpfs /run
 
     steps:
-    - run: pacman -Syu --noconfirm git
+    - run: pacman -Sy --noconfirm git
     - run: systemd-machine-id-setup
     - run: useradd -m builduser
 
@@ -164,7 +164,7 @@ jobs:
 
     runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/archlinux/archlinux:base
+      image: ghcr.io/archlinux/archlinux:base-devel-20250917.0.422098@sha256:b3e6b3d978475ecfaaf73c80809f57524aa6f29683acb276f0530580f22db1f6
 
     steps:
       - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
@@ -185,7 +185,7 @@ jobs:
           pattern: '*-test'
           merge-multiple: false
 
-      - run: pacman -Syu --noconfirm tree
+      - run: pacman -Sy --noconfirm tree
 
       - run: >-
           find . -type d -exec bash -c
