@@ -8,6 +8,10 @@
     {
       "extends": ["helpers:pinGitHubActionDigests", ":pinVersions"],
       "versioning": "npm"
+    },
+    {
+      "matchPackageNames": ["ghcr.io/archlinux/archlinux"],
+      "versionCompatibility": "^(?<compatibility>.*)-(?<version>[^-]*)$"
     }
   ]
 }
