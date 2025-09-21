@@ -70,14 +70,6 @@ jobs:
       options: --privileged --tmpfs /run
 
     steps:
-    - run: sed -i '/^NoExtract/d' /etc/pacman.conf
-    - run: echo "$REPO_CONFIG" >> /etc/pacman.conf
-      env:
-        REPO_CONFIG: |
-          [ddterm]
-          SigLevel = Never
-          Server = https://ddterm.github.io/aur
-
     - run: pacman -Sy --noconfirm --noprogressbar --color=always devtools
     - run: systemd-machine-id-setup
     - run: useradd -m builduser
@@ -96,7 +88,18 @@ jobs:
     - run: sudo -u builduser makepkg --allsource
       working-directory: ${{ matrix.package }}
 
-    - run: mkarchroot -C /etc/pacman.conf -M /etc/makepkg.conf /var/tmp/root base-devel
+    - run: mkarchroot -C "$PACMAN_CONF" -M "$MAKEPKG_CONF" /var/tmp/root base-devel
+      env:
+        PACMAN_CONF: /usr/share/devtools/pacman.conf.d/extra-testing.conf
+        MAKEPKG_CONF: /usr/share/devtools/makepkg.conf.d/x86_64.conf
+
+    - run: echo "$REPO_CONFIG" >> /var/tmp/root/etc/pacman.conf
+      env:
+        REPO_CONFIG: |
+          [ddterm]
+          SigLevel = Never
+          Server = https://ddterm.github.io/aur
+
     - run: makechrootpkg -r /var/tmp -c -n -C -U builduser -- --holdver
       working-directory: ${{ matrix.package }}
 
