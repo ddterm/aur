@@ -15,4 +15,4 @@ toxdir="$(find "$PWD" -name tox.ini -printf '%h' -quit)"
 
 echo "reports=${toxdir}/tests/report.html" >>"$GITHUB_OUTPUT"
 
-exec sudo -E -u builduser tox -c "${toxdir}" --sitepackages -e pytest -- "${pytest_args[@]}"
+exec sudo -E -H -u builduser tox -c "${toxdir}" --sitepackages -e pytest -- "${pytest_args[@]}"
