@@ -125,6 +125,11 @@ jobs:
       options: --privileged --tmpfs /run
 
     steps:
+    - run: |
+        # https://ubuntu.com/blog/ubuntu-23-10-restricted-unprivileged-user-namespaces
+        sysctl -w kernel.apparmor_restrict_unprivileged_unconfined=0
+        sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
     - run: pacman -Syu --noconfirm git
     - run: systemd-machine-id-setup
     - run: useradd -m builduser
