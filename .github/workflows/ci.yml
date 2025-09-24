@@ -125,7 +125,7 @@ jobs:
       options: --privileged --tmpfs /run
 
     steps:
-    - run: pacman -Sy --noconfirm git
+    - run: pacman -Syu --noconfirm git
     - run: systemd-machine-id-setup
     - run: useradd -m builduser
 
