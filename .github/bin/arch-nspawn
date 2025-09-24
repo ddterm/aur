@@ -12,7 +12,7 @@ for arg in "${args[@]}"; do
 done
 
 if ! (( has_keep_unit )); then
-    args=("--keep-unit" "${args[@]}")
+    args=("${args[@]}" "--keep-unit")
 fi
 
-exec /usr/bin/systemd-nspawn "${args[@]}"
+exec /usr/bin/arch-nspawn "${args[@]}"
