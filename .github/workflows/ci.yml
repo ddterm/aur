@@ -20,7 +20,7 @@ jobs:
       ACTIONLINT_VERSION: 1.7.10
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - working-directory: ${{ runner.temp }}
         run: |
@@ -48,7 +48,7 @@ jobs:
     steps:
       - run: pacman -Sy --noconfirm shellcheck git
 
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
 
       - run: echo '::add-matcher::.github/shellcheck-gcc-problem-matcher.json'
@@ -83,7 +83,7 @@ jobs:
     - run: useradd -m builduser
     - run: echo "$GITHUB_WORKSPACE/.github/bin" >> "$GITHUB_PATH"
 
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
     - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
     - run: chown -R builduser .
 
@@ -134,7 +134,7 @@ jobs:
     - run: systemd-machine-id-setup
     - run: useradd -m builduser
 
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         sparse-checkout: installed-test
 
