@@ -14,7 +14,8 @@
       "versionCompatibility": "^(?<compatibility>.*)-(?<version>[^-]*)$",
       "branchTopic": "{{{depNameSanitized}}}",
       "automerge": true,
-      "extends": ["schedule:automergeWeekly"]
+      "extends": ["schedule:automergeWeekly"],
+      "maxMajorIncrement": 0
     }
   ]
 }
