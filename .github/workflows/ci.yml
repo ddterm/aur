@@ -100,7 +100,7 @@ jobs:
     - run: makechrootpkg -r /var/tmp -c -n -C -U builduser -- --holdver
       working-directory: ${{ matrix.package }}
 
-    - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+    - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
       with:
         name: ${{ matrix.package }}-pkg
         path: |
@@ -138,7 +138,7 @@ jobs:
       with:
         sparse-checkout: installed-test
 
-    - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+    - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
       with:
         name: ${{ matrix.package }}-pkg
 
@@ -155,7 +155,7 @@ jobs:
       working-directory: ${{ matrix.package }}/src
       env:
         PACKAGE_NAME: ${{ matrix.package }}
-    - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+    - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
       with:
         name: ${{ matrix.package }}-test
         path: ${{ steps.runtest.outputs.reports }}
@@ -172,7 +172,7 @@ jobs:
       image: ghcr.io/archlinux/archlinux:base-devel-20260222.0.493277@sha256:a4f3a0c6320d7b26970308858e1a26273097645fcf57695c780156d4916d8476
 
     steps:
-      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           path: repo
           pattern: '*-pkg'
@@ -184,7 +184,7 @@ jobs:
       - run: repo-add ddterm.db.tar.zst ./*.pkg.tar.*
         working-directory: repo
 
-      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           path: repo
           pattern: '*-test'
