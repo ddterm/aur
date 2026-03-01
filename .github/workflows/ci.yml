@@ -43,7 +43,7 @@ jobs:
 
     runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/archlinux/archlinux:base-devel-20260222.0.493277@sha256:a4f3a0c6320d7b26970308858e1a26273097645fcf57695c780156d4916d8476
+      image: ghcr.io/archlinux/archlinux:base-devel-20260301.0.494996@sha256:e24bad93bef8acf34f649f97036936d337c6faaf9f9269f069aee4f087a3f041
 
     steps:
       - run: pacman -Sy --noconfirm shellcheck git
@@ -66,7 +66,7 @@ jobs:
 
     runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/archlinux/archlinux:base-devel-20260222.0.493277@sha256:a4f3a0c6320d7b26970308858e1a26273097645fcf57695c780156d4916d8476
+      image: ghcr.io/archlinux/archlinux:base-devel-20260301.0.494996@sha256:e24bad93bef8acf34f649f97036936d337c6faaf9f9269f069aee4f087a3f041
       options: --privileged --tmpfs /run
 
     steps:
@@ -121,7 +121,7 @@ jobs:
     needs: package
     runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/archlinux/archlinux:base-devel-20260222.0.493277@sha256:a4f3a0c6320d7b26970308858e1a26273097645fcf57695c780156d4916d8476
+      image: ghcr.io/archlinux/archlinux:base-devel-20260301.0.494996@sha256:e24bad93bef8acf34f649f97036936d337c6faaf9f9269f069aee4f087a3f041
       options: --privileged --tmpfs /run
 
     steps:
@@ -169,7 +169,7 @@ jobs:
 
     runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/archlinux/archlinux:base-devel-20260222.0.493277@sha256:a4f3a0c6320d7b26970308858e1a26273097645fcf57695c780156d4916d8476
+      image: ghcr.io/archlinux/archlinux:base-devel-20260301.0.494996@sha256:e24bad93bef8acf34f649f97036936d337c6faaf9f9269f069aee4f087a3f041
 
     steps:
       - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
