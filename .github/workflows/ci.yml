@@ -147,7 +147,7 @@ jobs:
     - run: tar xf ./*.src.tar.*
     - run: chown -R builduser .
       working-directory: ${{ matrix.package }}
-    - run: sudo -u builduser makepkg --nobuild --holdver --nodeps
+    - run: sudo -u builduser makepkg --noprepare --nobuild --holdver --nodeps
       working-directory: ${{ matrix.package }}
     - id: runtest
       run: >-
