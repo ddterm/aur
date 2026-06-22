@@ -17,5 +17,30 @@
       "extends": ["schedule:automergeWeekly"],
       "maxMajorIncrement": 0
     }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "gnome-shell-extension-ddterm/PKGBUILD",
+        "gnome-shell-extension-ddterm/.SRCINFO"
+      ],
+      "matchStrings": [
+        "(pkgbase|pkgname)\\s*=\\s*['\"]?(?<depName>\\S+)[\\s\\S]*pkgver\\s*=\\s*['\"]?(?<currentValue>\\S+)[\\s\\S]*sha256sums\\s*=(\\s*\\()?\\s*['\"]?(?<currentDigest>\\w+)"
+      ],
+      "datasourceTemplate": "github-release-attachments",
+      "packageNameTemplate": "ddterm/{{{ depName }}}",
+      "currentValueTemplate": "v{{{ currentValue }}}"
+    }
+  ],
+  "logLevelRemap": [
+    {
+      "matchMessage": "No dependencies found in file for custom regex manager",
+      "newLogLevel": "warn"
+    },
+    {
+      "matchMessage": "Found no results from datasource that look like a version",
+      "newLogLevel": "warn"
+    }
   ]
 }
