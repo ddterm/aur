@@ -4,6 +4,7 @@
     "config:recommended",
     "customManagers:githubActionsVersions"
   ],
+  "platformAutomerge": false,
   "packageRules": [
     {
       "extends": ["helpers:pinGitHubActionDigests", ":pinVersions"],
@@ -16,6 +17,14 @@
       "automerge": true,
       "extends": ["schedule:automergeWeekly"],
       "maxMajorIncrement": 0
+    },
+    {
+      "matchDatasources": ["custom.ddterm-release-tarball"],
+      "commitMessageTopic": "{{depName}}",
+      "commitMessageAction": "Release",
+      "semanticCommitType": "feat",
+      "semanticCommitScope": "pkg",
+      "automerge": true
     }
   ],
   "customManagers": [
