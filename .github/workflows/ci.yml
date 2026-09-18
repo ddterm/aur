@@ -14,7 +14,7 @@ env:
 
 jobs:
   actionlint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     env:
       # renovate: datasource=github-releases depName=rhysd/actionlint
       ACTIONLINT_VERSION: 1.7.12
@@ -41,7 +41,7 @@ jobs:
           - gnome-shell-extension-ddterm
           - gnome-shell-extension-ddterm-git
 
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     container:
       image: ghcr.io/archlinux/archlinux:base-devel-20260913.0.593083@sha256:15ea43d15445ddcbfc43cf12fdca6bf4f797ccc5f80e6f674b69813d8873f407
 
@@ -64,7 +64,7 @@ jobs:
           - gnome-shell-extension-ddterm
           - gnome-shell-extension-ddterm-git
 
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     container:
       image: ghcr.io/archlinux/archlinux:base-devel-20260913.0.593083@sha256:15ea43d15445ddcbfc43cf12fdca6bf4f797ccc5f80e6f674b69813d8873f407
       options: --privileged --tmpfs /run
@@ -119,7 +119,7 @@ jobs:
           - gnome-shell-extension-ddterm-git
 
     needs: package
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     container:
       image: ghcr.io/archlinux/archlinux:base-devel-20260913.0.593083@sha256:15ea43d15445ddcbfc43cf12fdca6bf4f797ccc5f80e6f674b69813d8873f407
       options: --privileged --tmpfs /run
@@ -167,7 +167,7 @@ jobs:
       - package
       - installed-test
 
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     container:
       image: ghcr.io/archlinux/archlinux:base-devel-20260913.0.593083@sha256:15ea43d15445ddcbfc43cf12fdca6bf4f797ccc5f80e6f674b69813d8873f407
 
