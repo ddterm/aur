@@ -23,6 +23,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - run: |
           curl -fsLO "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
@@ -49,6 +51,8 @@ jobs:
       - run: pacman -Sy --noconfirm shellcheck git
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
 
       - run: echo '::add-matcher::.github/shellcheck-gcc-problem-matcher.json'
@@ -84,6 +88,8 @@ jobs:
     - run: echo "$GITHUB_WORKSPACE/.github/bin" >> "$GITHUB_PATH"
 
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
     - run: git config --global --replace-all safe.directory "$GITHUB_WORKSPACE"
     - run: chown -R builduser .
 
@@ -137,6 +143,7 @@ jobs:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         sparse-checkout: installed-test
+        persist-credentials: false
 
     - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
       with:
