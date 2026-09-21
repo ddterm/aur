@@ -1,8 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    "customManagers:githubActionsVersions"
+    "config:recommended"
   ],
   "platformAutomerge": false,
   "packageRules": [
@@ -38,15 +37,27 @@
       "matchStrings": [
         "(pkgbase|pkgname)\\s*=\\s*['\"]?(?<depName>\\S+)[\\s\\S]*pkgver\\s*=\\s*['\"]?(?<currentValue>\\S+)[\\s\\S]*sha256sums\\s*=(\\s*\\()?\\s*['\"]?(?<currentDigest>\\w+)"
       ],
-      "datasourceTemplate": "custom.ddterm-release-tarball",
+      "datasourceTemplate": "custom.github-release-assets",
+      "registryUrlTemplate": "https://api.github.com/repos/ddterm/gnome-shell-extension-ddterm/releases",
+      "packageNameTemplate": "/^ddterm-[\\d.]+\\.tar\\.gz$/",
       "versioningTemplate": "npm"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/code-scan.yml"
+      ],
+      "matchStrings": [
+        "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(\\s+(lookupName|packageName)=(?<packageName>\\S+))?(\\s+versioning=(?<versioning>\\S+))?(\\s+extractVersion=(?<extractVersion>\\S+))?(\\s+registryUrl=(?<registryUrl>\\S+))?\\n[^\\n:=]*[:=]\\s*[\"']?(?<currentValue>[^\\s\"']+)[\"']?(\\s|$)",
+        "#\\s*renovate-digest:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)\\s+currentValue=(?<currentValue>\\S+)(\\s+(lookupName|packageName)=(?<packageName>\\S+))?(\\s+versioning=(?<versioning>\\S+))?(\\s+extractVersion=(?<extractVersion>\\S+))?(\\s+registryUrl=(?<registryUrl>\\S+))?\\n[^\\n:=]*[:=]\\s*[\"']?(?<currentDigest>[^\\s\"']+)[\"']?(\\s|$)"
+      ]
     }
   ],
   "customDatasources": {
-    "ddterm-release-tarball": {
-      "defaultRegistryUrlTemplate": "https://api.github.com/repos/ddterm/gnome-shell-extension-ddterm/releases",
+    "github-release-assets": {
       "transformTemplates": [
-        "{'releases':$[draft=false].{'version':$replace(tag_name,/^v/,''),'isStable':$not(prerelease),'digest':assets[$contains(name,/^ddterm-.*\\.tar\\.gz$/)].digest.($?$replace(/^sha256:/,''):null)}}"
+        "{'releases':$[draft=false].{'version':$replace(tag_name,/^v/,''),'isStable':$not(prerelease),'digest':assets[$contains(name,{{{packageName}}})][0].digest.($?$replace(/^sha256:/,''):undefined),'releaseTimestamp':published_at}}"
       ]
     }
   },
