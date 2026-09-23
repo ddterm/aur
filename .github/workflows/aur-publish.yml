@@ -24,7 +24,7 @@ jobs:
           - gnome-shell-extension-ddterm
           - gnome-shell-extension-ddterm-git
 
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     environment:
       name: AUR
       url: https://aur.archlinux.org/packages/${{ matrix.package }}

@@ -14,7 +14,7 @@ env:
 
 jobs:
   actionlint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     env:
       # renovate: datasource=custom.github-release-assets depName=actionlint packageName=/^actionlint_.*_linux_amd64\.tar\.gz$/ registryUrl=https://api.github.com/repos/rhysd/actionlint/releases
       ACTIONLINT_VERSION: '1.7.12'
@@ -43,7 +43,7 @@ jobs:
           - gnome-shell-extension-ddterm
           - gnome-shell-extension-ddterm-git
 
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     container:
       image: ghcr.io/archlinux/archlinux:base-devel-20260920.0.597023@sha256:ee27441f8c262329099a65cc270f66e7597019854f4dd8839666d0d39abc5a0c
 
@@ -68,7 +68,7 @@ jobs:
           - gnome-shell-extension-ddterm
           - gnome-shell-extension-ddterm-git
 
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     container:
       image: ghcr.io/archlinux/archlinux:base-devel-20260920.0.597023@sha256:ee27441f8c262329099a65cc270f66e7597019854f4dd8839666d0d39abc5a0c
       options: --privileged --tmpfs /run
@@ -125,7 +125,7 @@ jobs:
           - gnome-shell-extension-ddterm-git
 
     needs: package
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     container:
       image: ghcr.io/archlinux/archlinux:base-devel-20260920.0.597023@sha256:ee27441f8c262329099a65cc270f66e7597019854f4dd8839666d0d39abc5a0c
       options: --privileged --tmpfs /run
@@ -174,7 +174,7 @@ jobs:
       - package
       - installed-test
 
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     container:
       image: ghcr.io/archlinux/archlinux:base-devel-20260920.0.597023@sha256:ee27441f8c262329099a65cc270f66e7597019854f4dd8839666d0d39abc5a0c
 
