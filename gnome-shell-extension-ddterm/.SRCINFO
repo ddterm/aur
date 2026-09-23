@@ -18,6 +18,6 @@ pkgbase = gnome-shell-extension-ddterm
 pkgname = gnome-shell-extension-ddterm
 	depends = gjs
 	depends = gtk3
-	depends = gnome-shell<=1:50.99
+	depends = gnome-shell<=1:51.99
 	depends = vte3
 	depends = libhandy
