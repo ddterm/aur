@@ -18,7 +18,9 @@
       "maxMajorIncrement": 0
     },
     {
-      "matchDatasources": ["custom.ddterm-release-tarball"],
+      "matchDepNames": [
+        "gnome-shell-extension-ddterm"
+      ],
       "commitMessageTopic": "{{depName}}",
       "commitMessageAction": "Release",
       "commitMessageExtra": "{{#if isPinDigest}}{{{newDigestShort}}}{{else}}{{#if isMajor}}{{prettyNewMajor}}{{else}}{{#if isSingleVersion}}{{prettyNewVersion}}{{else}}{{#if newValue}}{{{newValue}}}{{else}}{{{newDigestShort}}}{{/if}}{{/if}}{{/if}}{{/if}}",
@@ -39,7 +41,7 @@
       ],
       "datasourceTemplate": "custom.github-release-assets",
       "registryUrlTemplate": "https://api.github.com/repos/ddterm/gnome-shell-extension-ddterm/releases",
-      "packageNameTemplate": "/^ddterm-[\\d.]+\\.tar\\.gz$/",
+      "packageNameTemplate": "/^ddterm-[\\d\\.]+\\.tar\\.gz$/",
       "versioningTemplate": "npm"
     },
     {
